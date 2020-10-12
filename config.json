@@ -1,0 +1,13 @@
+﻿{
+  "LanguageLevelKeywords": [
+    "c#",
+    ".net"
+  ],
+  "PositionLevelKeywords": [
+    "intern",
+    "junior"
+  ],
+
+  "PageCount": 10,
+  "ItemCountPerPage": 15
+}
