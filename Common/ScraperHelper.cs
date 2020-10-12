@@ -14,11 +14,11 @@ namespace JobsBgScraper.Common
     {
         // Programming Language Search Parameters
         public static IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
-        {};
+        {"c#", ".net"};
 
         // Position Level Search Parameters
         public static IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
-        {};
+        {"intern", "junior"};
 
 
         public static readonly int MaxPageCount = 10;
