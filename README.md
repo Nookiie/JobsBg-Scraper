@@ -1,5 +1,5 @@
 # Introduction
-A simple, practical application for finding jobs and associated companies within jobs.bg.
+A primitive, practical application for finding jobs and associated companies within [jobs.bg](https://www.jobs.bg) with specified keywords on a <b> CLI </b> interface.
 
 # HowToUse
 #### Requirements
