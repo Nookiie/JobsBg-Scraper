@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,11 +46,11 @@ namespace JobsBgScraper.Common
 
                     foreach (var firstTerm in ScraperHelpers.FirstConditionalJobKeyWords)
                     {
-                        if (position.Contains(firstTerm))
+                        if (position.Contains(firstTerm.ToLower()))
                         {
                             foreach (var secondTerm in ScraperHelpers.SecondConditionalJobKeyWords)
                             {
-                                if (position.Contains(secondTerm))
+                                if (position.Contains(secondTerm.ToLower()))
                                 {
                                     var companyNode = node.SelectNodes("../../td/a[contains(@class, 'company_link')]");
                                     company = companyNode[0].InnerText;
