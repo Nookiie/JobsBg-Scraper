@@ -7,7 +7,7 @@ namespace JobsBgScraper
     {
         static void Main(string[] args)
         {
-            ScraperManager.GetScrapeResultsAndAlertJob(ScraperManager.ScrapeWebsiteJob().Result);
+            ScraperManager.GetScrapeResultsAndAlertJob(ScraperManager.GetHtmlDocumentsJob().Result);
 
             Console.ReadKey();
         }

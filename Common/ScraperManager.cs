@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,11 +16,16 @@ namespace JobsBgScraper.Common
     {
         private static readonly CancellationTokenSource cancellationToken = new CancellationTokenSource();
 
-        public static async Task<IEnumerable<HtmlDocument>> ScrapeWebsiteJob()
+        public static async Task<IEnumerable<HtmlDocument>> GetHtmlDocumentsJob()
         {
             cancellationToken.Token.ThrowIfCancellationRequested();
             var web = new HtmlWeb();
             var docs = new Collection<HtmlDocument>();
+
+            if (ScraperHelpers.JobSiteUrls is null)
+            {
+                return null;
+            }
 
             foreach (var site in ScraperHelpers.JobSiteUrls)
             {
@@ -32,6 +38,11 @@ namespace JobsBgScraper.Common
 
         public static void GetScrapeResultsAndAlertJob(IEnumerable<HtmlDocument> documents)
         {
+            if (!IsScraperConfigValid(documents))
+            {
+                return;
+            }
+
             var classNodes = new List<JobNode>();
 
             foreach (var document in documents)
@@ -67,6 +78,27 @@ namespace JobsBgScraper.Common
             // SaveAsJSON(classNodes);
         }
 
+        public static bool IsScraperConfigValid(IEnumerable<HtmlDocument> documents)
+        {
+            if (documents is null)
+            {
+                Console.WriteLine("No JobSite URLs detected.\nOperation aborted");
+                return false;
+            }
+
+            if (ScraperHelpers.MaxItemCountOnJobsBg == 0)
+            {
+                Console.WriteLine($"Invalid " +
+                    $"{nameof(ScraperHelpers.ItemCountPerPage)}" +
+                    $" or {nameof(ScraperHelpers.MaxPageCount)} parameter values \n" +
+                    "Operation aborted");
+
+                return false;
+            }
+
+            return true;
+        }
+
         private static void FormatNodesJob(string position, string company, List<JobNode> classNodes)
         {
             classNodes.Add(new JobNode(position, company));
@@ -95,6 +127,12 @@ namespace JobsBgScraper.Common
 
         private static void PrintResultsJob(List<JobNode> collection)
         {
+            if (collection is null)
+            {
+                Console.WriteLine("Invalid Helper Parameters");
+                return;
+            }
+
             Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine(ResultsToStringJob(collection));
         }
