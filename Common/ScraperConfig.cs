@@ -14,8 +14,11 @@ namespace JobsBgScraper.Common
     /// </summary>
     public static class ScraperConfig
     {
-        private static readonly int maxPageCount = 10;
-        private static readonly int itemCountPerPage = 15;
+        // Only change values within this region!
+        #region Editable
+
+        private static readonly int DEFAULT_MAX_PAGE_COUNT = 10;
+        private static readonly int DEFAULT_ITEM_COUNT_PER_PAGE = 15;
 
         // Programming Language Search Parameters
         public static IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
@@ -24,14 +27,17 @@ namespace JobsBgScraper.Common
         // Position Level Search Parameters
         public static IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
         {"intern", "junior"};
-        
+
+        #endregion
+
         public static int MaxPageCount
         {
-            get => maxPageCount >= 0 ? maxPageCount : 0;
+            get => DEFAULT_MAX_PAGE_COUNT >= 0 ? DEFAULT_MAX_PAGE_COUNT : 0;
         }
         public static int ItemCountPerPage
         {
-            get => itemCountPerPage >= 0 ? itemCountPerPage : 0;
+            get => DEFAULT_ITEM_COUNT_PER_PAGE >= 0 ? DEFAULT_ITEM_COUNT_PER_PAGE : 0;
+
         }
         public static int MaxItemCountOnJobsBg
         {

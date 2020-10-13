@@ -78,6 +78,8 @@ namespace JobsBgScraper.Common
             // SaveAsJSON(classNodes);
         }
 
+        #region Helpers
+
         public static bool IsScraperConfigValid()
         {
             if (ScraperConfig.JobSiteUrls is null)
@@ -147,5 +149,7 @@ namespace JobsBgScraper.Common
 
             File.WriteAllText(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/History/history.json", json);
         }
+
+        #endregion
     }
 }
