@@ -20,6 +20,7 @@ namespace JobsBgScraper.Common
         {
             if (!IsScraperConfigValid())
             {
+                Console.WriteLine("Operation aborted!");
                 return null;
             }
 
@@ -80,11 +81,11 @@ namespace JobsBgScraper.Common
 
         #region Helpers
 
-        public static bool IsScraperConfigValid()
+        private static bool IsScraperConfigValid()
         {
             if (ScraperConfig.JobSiteUrls is null)
             {
-                Console.WriteLine("No JobSite URLs detected.\nOperation aborted");
+                Console.WriteLine("No JobSite URLs detected.");
                 return false;
             }
 
@@ -92,8 +93,7 @@ namespace JobsBgScraper.Common
             {
                 Console.WriteLine($"Invalid " +
                     $"{nameof(ScraperConfig.ItemCountPerPage)}" +
-                    $" or {nameof(ScraperConfig.MaxPageCount)} parameter values \n" +
-                    "Operation aborted");
+                    $" or {nameof(ScraperConfig.MaxPageCount)} parameter values.");
 
                 return false;
             }
