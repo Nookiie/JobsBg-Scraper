@@ -4,8 +4,8 @@ A primitive, practical application for finding job openings and their associated
 # HowToUse
 ### Requirements
 - DotNet Version 3.1
-<br />
-Using a text editor, navigate to ScraperHelpers.cs and edit the corresponding parameters that you wish to change <br />
+
+Using a text editor, navigate to ScraperHelpers.cs and edit the corresponding parameters that you wish to change.<br />
 After that run with Visual Studio or run the command `dotnet run` in your CMD on the project's folder location
 
 # ToDo
