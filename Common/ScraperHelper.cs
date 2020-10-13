@@ -12,9 +12,11 @@ namespace JobsBgScraper.Common
     /// <summary>
     /// Custom Parameters for the ScraperManager
     /// </summary>
-    public static class ScraperHelpers
+    public static class ScraperConfig
     {
-       
+        private static readonly int maxPageCount = 10;
+        private static readonly int itemCountPerPage = 15;
+
         // Programming Language Search Parameters
         public static IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
         {"c#", ".net"};
@@ -22,26 +24,21 @@ namespace JobsBgScraper.Common
         // Position Level Search Parameters
         public static IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
         {"intern", "junior"};
-
-        private static readonly int maxPageCount = 10;
-        private static readonly int itemCountPerPage = 15;
-
+        
         public static int MaxPageCount
         {
             get => maxPageCount >= 0 ? maxPageCount : 0;
         }
-
         public static int ItemCountPerPage
         {
             get => itemCountPerPage >= 0 ? itemCountPerPage : 0;
         }
-
         public static int MaxItemCountOnJobsBg
         {
             get => MaxPageCount * ItemCountPerPage;
         }
 
-        // Automatically generates all page clones of the jobs.bg domain per the parameters above
+        // Automatically generates all page iterations of the jobs.bg domain per the parameters above
         public static IEnumerable<string> JobSiteUrls
         {
             get

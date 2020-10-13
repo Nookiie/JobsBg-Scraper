@@ -18,16 +18,16 @@ namespace JobsBgScraper.Common
 
         public static async Task<IEnumerable<HtmlDocument>> GetHtmlDocumentsJob()
         {
-            cancellationToken.Token.ThrowIfCancellationRequested();
-            var web = new HtmlWeb();
-            var docs = new Collection<HtmlDocument>();
-
-            if (ScraperHelpers.JobSiteUrls is null)
+            if (!IsScraperConfigValid())
             {
                 return null;
             }
 
-            foreach (var site in ScraperHelpers.JobSiteUrls)
+            cancellationToken.Token.ThrowIfCancellationRequested();
+            var web = new HtmlWeb();
+            var docs = new Collection<HtmlDocument>();
+
+            foreach (var site in ScraperConfig.JobSiteUrls)
             {
                 docs.Add(await web.LoadFromWebAsync(site));
                 cancellationToken.Token.ThrowIfCancellationRequested();
@@ -38,7 +38,7 @@ namespace JobsBgScraper.Common
 
         public static void GetScrapeResultsAndAlertJob(IEnumerable<HtmlDocument> documents)
         {
-            if (!IsScraperConfigValid(documents))
+            if (documents is null)
             {
                 return;
             }
@@ -55,11 +55,11 @@ namespace JobsBgScraper.Common
                     var position = node.InnerText.ToLower();
                     string company = null;
 
-                    foreach (var firstTerm in ScraperHelpers.FirstConditionalJobKeyWords)
+                    foreach (var firstTerm in ScraperConfig.FirstConditionalJobKeyWords)
                     {
                         if (position.Contains(firstTerm.ToLower()))
                         {
-                            foreach (var secondTerm in ScraperHelpers.SecondConditionalJobKeyWords)
+                            foreach (var secondTerm in ScraperConfig.SecondConditionalJobKeyWords)
                             {
                                 if (position.Contains(secondTerm.ToLower()))
                                 {
@@ -78,19 +78,19 @@ namespace JobsBgScraper.Common
             // SaveAsJSON(classNodes);
         }
 
-        public static bool IsScraperConfigValid(IEnumerable<HtmlDocument> documents)
+        public static bool IsScraperConfigValid()
         {
-            if (documents is null)
+            if (ScraperConfig.JobSiteUrls is null)
             {
                 Console.WriteLine("No JobSite URLs detected.\nOperation aborted");
                 return false;
             }
 
-            if (ScraperHelpers.MaxItemCountOnJobsBg == 0)
+            if (ScraperConfig.MaxItemCountOnJobsBg == 0)
             {
                 Console.WriteLine($"Invalid " +
-                    $"{nameof(ScraperHelpers.ItemCountPerPage)}" +
-                    $" or {nameof(ScraperHelpers.MaxPageCount)} parameter values \n" +
+                    $"{nameof(ScraperConfig.ItemCountPerPage)}" +
+                    $" or {nameof(ScraperConfig.MaxPageCount)} parameter values \n" +
                     "Operation aborted");
 
                 return false;
