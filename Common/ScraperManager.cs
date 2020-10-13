@@ -32,7 +32,7 @@ namespace JobsBgScraper.Common
 
         public static void GetScrapeResultsAndAlertJob(IEnumerable<HtmlDocument> documents)
         {
-            List<JobNode> classNodes = new List<JobNode>();
+            var classNodes = new List<JobNode>();
 
             foreach (var document in documents)
             {
@@ -79,18 +79,15 @@ namespace JobsBgScraper.Common
                 return string.Format("There are no available jobs with matching criteria");
             }
 
-            var text = string.Format("Number of available jobs with matching criteria: {0}", collection.Count, "\n");
+            var text = string.Format($"Number of available jobs with matching criteria: {collection.Count} \n");
             var sb = new StringBuilder();
 
             sb.Append(text);
             sb.Append("\n\n");
 
-            if (collection.Count > 0)
+            foreach (var item in collection)
             {
-                foreach (var item in collection)
-                {
-                    sb.Append($"{item.Position}, {item.Company} \n");
-                }
+                sb.Append($"{item.Position}, {item.Company} \n");
             }
 
             return sb.ToString();
@@ -102,6 +99,10 @@ namespace JobsBgScraper.Common
             Console.WriteLine(ResultsToStringJob(collection));
         }
 
+        /// <summary>
+        /// Unused functionality of saving history of results from findings
+        /// </summary>
+        /// <param name="classNodes"></param>
         private static void SaveAsJSONJob(List<JobNode> classNodes)
         {
             string json = JsonConvert.SerializeObject(classNodes.ToArray());

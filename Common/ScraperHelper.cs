@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace JobsBgScraper.Common
 {
-    // Parameters are located Here!
+    // Parameters are located here!
 
     /// <summary>
     /// Custom Parameters for the ScraperManager
@@ -31,15 +31,11 @@ namespace JobsBgScraper.Common
         {
             get
             {
-                var siteLists = new List<string>();
-
                 for (var counter = 0; counter < MaxItemCountOnJobsBg; counter += ItemCountPerPage)
                 {
-                    siteLists.Add(string.Format
-                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid=2#paging"));
+                    yield return string.Format
+                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid=2#paging");
                 }
-
-                return siteLists;
             }
         }
     }
