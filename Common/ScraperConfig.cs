@@ -19,6 +19,10 @@ namespace JobsBgScraper.Common
     {
         private static readonly int DEFAULT_ITEM_COUNT_PER_PAGE = 15;
 
+        public readonly string HTML_JOB_CLASS_NAME = "joblink";
+        public readonly string HTML_COMPANY_CLASS_NAME = "company_link";
+        public readonly string HTML_PAGE_LINK_CLASS_NAME = "pathlink";
+
         // Only change values within this region
         #region Editable
 
@@ -28,10 +32,10 @@ namespace JobsBgScraper.Common
 
         // Position Level Search Parameters
         public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
-        {"intern", "senior"};
+        {"intern", "junior"};
 
         // Location to analyse jobs in
-        public int SelectedLocation { get; set; } = (int)Locations.Sofia;
+        public int SelectedLocation { get; set; } = (int)Locations.Plovdiv;
 
         #endregion
 
@@ -53,7 +57,6 @@ namespace JobsBgScraper.Common
                         ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid={SelectedLocation}#paging");
                 }
             }
-            set { }
         }
     }
 }

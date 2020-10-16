@@ -14,7 +14,7 @@ namespace JobsBgScraper.Common
 {
     public class ScraperManager
     {
-        private readonly CancellationTokenSource cancellationToken = new CancellationTokenSource();
+        private static readonly CancellationTokenSource cancellationToken = new CancellationTokenSource();
         private static readonly ScraperConfig config = new ScraperConfig();
 
         public async Task<IEnumerable<HtmlDocument>> GetHtmlDocumentsJob()
@@ -29,6 +29,7 @@ namespace JobsBgScraper.Common
             var web = new HtmlWeb();
             var docs = new List<HtmlDocument>();
 
+            // First probe on the site's uri, we want to find out how many pages we can scan
             config.MaxPageCount = await GetMaxPageCountOnSiteProbe();
 
             foreach (var site in config.JobSiteUrls)
@@ -50,8 +51,8 @@ namespace JobsBgScraper.Common
             var classNodes = new List<JobNode>();
             foreach (var document in documents)
             {
-                var positionNodes = document.DocumentNode.SelectNodes("//*[contains(@class, 'joblink')]");
-                var companyNodes = document.DocumentNode.SelectNodes("//*[contains(@class, 'company_link')]");
+                var positionNodes = document.DocumentNode.SelectNodes($"//*[contains(@class, '{config.HTML_JOB_CLASS_NAME}')]");
+                var companyNodes = document.DocumentNode.SelectNodes($"//*[contains(@class, '{config.HTML_COMPANY_CLASS_NAME}')]");
 
                 foreach (var node in positionNodes)
                 {
@@ -66,7 +67,7 @@ namespace JobsBgScraper.Common
                             {
                                 if (position.Contains(secondTerm.ToLower()))
                                 {
-                                    var companyNode = node.SelectNodes("../../td/a[contains(@class, 'company_link')]");
+                                    var companyNode = node.SelectNodes($"../../td/a[contains(@class, '{config.HTML_COMPANY_CLASS_NAME}')]");
                                     company = companyNode[0].InnerText;
 
                                     FormatNodesJob(position, company, classNodes);
@@ -85,12 +86,12 @@ namespace JobsBgScraper.Common
 
         private async Task<int> GetMaxPageCountOnSiteProbe()
         {
-            var url = string.Format
+            var uri = string.Format
                 ($"https://www.jobs.bg/front_job_search.php?frompage=0&add_sh=1&categories%5B0%5D=15&location_sid={config.SelectedLocation}#paging");
 
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(url);
-            var limit = doc.DocumentNode.SelectNodes("//*[contains(@class, 'pathlink')]");
+            var doc = await web.LoadFromWebAsync(uri);
+            var limit = doc.DocumentNode.SelectNodes($"//*[contains(@class, '{config.HTML_PAGE_LINK_CLASS_NAME}')]");
 
             return int.Parse(limit[limit.Count() - 2].InnerText);
         }
