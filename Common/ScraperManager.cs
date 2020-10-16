@@ -12,11 +12,12 @@ using System.Threading.Tasks;
 
 namespace JobsBgScraper.Common
 {
-    public static class ScraperManager
+    public class ScraperManager
     {
-        private static readonly CancellationTokenSource cancellationToken = new CancellationTokenSource();
+        private readonly CancellationTokenSource cancellationToken = new CancellationTokenSource();
+        private static readonly ScraperConfig config = new ScraperConfig();
 
-        public static async Task<IEnumerable<HtmlDocument>> GetHtmlDocumentsJob()
+        public async Task<IEnumerable<HtmlDocument>> GetHtmlDocumentsJob()
         {
             if (!IsScraperConfigValid())
             {
@@ -26,9 +27,11 @@ namespace JobsBgScraper.Common
 
             cancellationToken.Token.ThrowIfCancellationRequested();
             var web = new HtmlWeb();
-            var docs = new Collection<HtmlDocument>();
+            var docs = new List<HtmlDocument>();
 
-            foreach (var site in ScraperConfig.JobSiteUrls)
+            config.MaxPageCount = await GetMaxPageCountOnSiteProbe();
+
+            foreach (var site in config.JobSiteUrls)
             {
                 docs.Add(await web.LoadFromWebAsync(site));
                 cancellationToken.Token.ThrowIfCancellationRequested();
@@ -37,7 +40,7 @@ namespace JobsBgScraper.Common
             return docs;
         }
 
-        public static void GetScrapeResultsAndAlertJob(IEnumerable<HtmlDocument> documents)
+        public void GetScrapeResultsAndAlertJob(IEnumerable<HtmlDocument> documents)
         {
             if (documents is null)
             {
@@ -45,7 +48,6 @@ namespace JobsBgScraper.Common
             }
 
             var classNodes = new List<JobNode>();
-
             foreach (var document in documents)
             {
                 var positionNodes = document.DocumentNode.SelectNodes("//*[contains(@class, 'joblink')]");
@@ -56,11 +58,11 @@ namespace JobsBgScraper.Common
                     var position = node.InnerText.ToLower();
                     string company = null;
 
-                    foreach (var firstTerm in ScraperConfig.FirstConditionalJobKeyWords)
+                    foreach (var firstTerm in config.FirstConditionalJobKeyWords)
                     {
                         if (position.Contains(firstTerm.ToLower()))
                         {
-                            foreach (var secondTerm in ScraperConfig.SecondConditionalJobKeyWords)
+                            foreach (var secondTerm in config.SecondConditionalJobKeyWords)
                             {
                                 if (position.Contains(secondTerm.ToLower()))
                                 {
@@ -81,32 +83,35 @@ namespace JobsBgScraper.Common
 
         #region Helpers
 
-        private static bool IsScraperConfigValid()
+        private async Task<int> GetMaxPageCountOnSiteProbe()
         {
-            if (ScraperConfig.JobSiteUrls is null)
+            var url = string.Format
+                ($"https://www.jobs.bg/front_job_search.php?frompage=0&add_sh=1&categories%5B0%5D=15&location_sid={config.SelectedLocation}#paging");
+
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(url);
+            var limit = doc.DocumentNode.SelectNodes("//*[contains(@class, 'pathlink')]");
+
+            return int.Parse(limit[limit.Count() - 2].InnerText);
+        }
+
+        private bool IsScraperConfigValid()
+        {
+            if (config.JobSiteUrls is null)
             {
                 Console.WriteLine("No JobSite URLs detected.");
-                return false;
-            }
-
-            if (ScraperConfig.MaxItemCountOnJobsBg == 0)
-            {
-                Console.WriteLine($"Invalid " +
-                    $"{nameof(ScraperConfig.ItemCountPerPage)}" +
-                    $" or {nameof(ScraperConfig.MaxPageCount)} parameter values.");
-
                 return false;
             }
 
             return true;
         }
 
-        private static void FormatNodesJob(string position, string company, List<JobNode> classNodes)
+        private void FormatNodesJob(string position, string company, List<JobNode> classNodes)
         {
             classNodes.Add(new JobNode(position, company));
         }
 
-        private static string ResultsToStringJob(List<JobNode> collection)
+        private string ResultsToStringJob(List<JobNode> collection)
         {
             if (collection.Count == 0)
             {
@@ -127,7 +132,7 @@ namespace JobsBgScraper.Common
             return sb.ToString();
         }
 
-        private static void PrintResultsJob(List<JobNode> collection)
+        private void PrintResultsJob(List<JobNode> collection)
         {
             if (collection is null)
             {
@@ -139,11 +144,16 @@ namespace JobsBgScraper.Common
             Console.WriteLine(ResultsToStringJob(collection));
         }
 
+        private void ImportSettingsJob()
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Unused functionality of saving history of results from findings
         /// </summary>
         /// <param name="classNodes"></param>
-        private static void SaveAsJSONJob(List<JobNode> classNodes)
+        private void SaveAsJSONJob(List<JobNode> classNodes)
         {
             string json = JsonConvert.SerializeObject(classNodes.ToArray());
 

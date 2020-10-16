@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AngleSharp.Common;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -12,49 +15,45 @@ namespace JobsBgScraper.Common
     /// <summary>
     /// Custom Parameters for the ScraperManager
     /// </summary>
-    public static class ScraperConfig
+    public class ScraperConfig
     {
-        // Only change values within this region!
-        #region Editable
-
-        private static readonly int DEFAULT_MAX_PAGE_COUNT = 10;
         private static readonly int DEFAULT_ITEM_COUNT_PER_PAGE = 15;
 
+        // Only change values within this region
+        #region Editable
+
         // Programming Language Search Parameters
-        public static IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
+        public IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
         {"c#", ".net"};
 
         // Position Level Search Parameters
-        public static IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
-        {"intern", "junior"};
+        public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
+        {"intern", "senior"};
+
+        // Location to analyse jobs in
+        public int SelectedLocation { get; set; } = (int)Locations.Sofia;
 
         #endregion
 
-        public static int MaxPageCount
-        {
-            get => DEFAULT_MAX_PAGE_COUNT >= 0 ? DEFAULT_MAX_PAGE_COUNT : 0;
-        }
-        public static int ItemCountPerPage
-        {
-            get => DEFAULT_ITEM_COUNT_PER_PAGE >= 0 ? DEFAULT_ITEM_COUNT_PER_PAGE : 0;
-
-        }
-        public static int MaxItemCountOnJobsBg
+        public int MaxPageCount { get; set; }
+        public int ItemCountPerPage { get; set; } = DEFAULT_ITEM_COUNT_PER_PAGE;
+        public int MaxItemCountOnJobsBg
         {
             get => MaxPageCount * ItemCountPerPage;
         }
 
         // Automatically generates all page iterations of the jobs.bg domain per the parameters above
-        public static IEnumerable<string> JobSiteUrls
+        public IEnumerable<string> JobSiteUrls
         {
             get
             {
                 for (var counter = 0; counter < MaxItemCountOnJobsBg; counter += ItemCountPerPage)
                 {
                     yield return string.Format
-                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid=2#paging");
+                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid={SelectedLocation}#paging");
                 }
             }
+            set { }
         }
     }
 }
