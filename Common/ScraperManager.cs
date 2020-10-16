@@ -166,7 +166,6 @@ namespace JobsBgScraper.Common
         private string ResultsToStringJob(List<JobNode> collection)
         {
             var sb = new StringBuilder();
-
             sb.Append("Languages:");
 
             if (!config.FirstConditionalJobKeyWords.Any())
@@ -182,7 +181,6 @@ namespace JobsBgScraper.Common
             }
 
             sb.Append("\nPositions:");
-
             if (!config.SecondConditionalJobKeyWords.Any())
             {
                 sb.Append(" none");
@@ -200,12 +198,12 @@ namespace JobsBgScraper.Common
                 .ToLower();
 
             sb.Append($"\nLocation: {location}");
-
             sb.Append("\n");
 
             if (collection.Count == 0)
             {
-                return string.Format("There are no available jobs with matching criteria");
+                sb.Append("\nThere are no available jobs with matching criteria");
+                return sb.ToString();
             }
 
             var text = string.Format($"Number of available jobs with matching criteria: {collection.Count} \n");
