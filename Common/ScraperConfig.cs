@@ -17,12 +17,6 @@ namespace JobsBgScraper.Common
     /// </summary>
     public class ScraperConfig
     {
-        private static readonly int DEFAULT_ITEM_COUNT_PER_PAGE = 15;
-
-        public readonly string HTML_JOB_CLASS_NAME = "joblink";
-        public readonly string HTML_COMPANY_CLASS_NAME = "company_link";
-        public readonly string HTML_PAGE_LINK_CLASS_NAME = "pathlink";
-
         // Only change values within this region
         #region Editable
 
@@ -40,7 +34,7 @@ namespace JobsBgScraper.Common
         #endregion
 
         public int MaxPageCount { get; set; }
-        public int ItemCountPerPage { get; set; } = DEFAULT_ITEM_COUNT_PER_PAGE;
+        public int ItemCountPerPage { get; set; } = GlobalConstants.DEFAULT_ITEM_COUNT_PER_PAGE;
         public int MaxItemCountOnJobsBg
         {
             get => MaxPageCount * ItemCountPerPage;
