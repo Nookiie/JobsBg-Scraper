@@ -26,7 +26,7 @@ namespace JobsBgScraper.Common
 
         // Position Level Search Parameters
         public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
-        {"intern", "junior"};
+        {"intern", "trainee", "junior"};
 
         // Location to analyse jobs in
         public int SelectedLocation { get; set; } = (int)Locations.Plovdiv;

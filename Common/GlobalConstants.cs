@@ -21,7 +21,7 @@ namespace JobsBgScraper.Common
         public static readonly string HTML_JOB_CLASS_NAME = "joblink";
         public static readonly string HTML_COMPANY_CLASS_NAME = "company_link";
         public static readonly string HTML_PAGE_LINK_CLASS_NAME = "pathlink";
-
+        public static readonly string HTML_PAGE_LINK_CURRENT_CLASS_NAME = "currentpage";
         #endregion
     }
 }
