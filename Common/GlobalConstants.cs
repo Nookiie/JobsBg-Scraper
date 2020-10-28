@@ -9,7 +9,8 @@ namespace JobsBgScraper.Common
         #region Site Meta Info
 
         public static readonly string SITE_NAME = "JobsBg";
-        public static readonly string SITE_PROBE_URI = $"https://www.jobs.bg/front_job_search.php?frompage=0&add_sh=1&categories%5B0%5D=15";
+        public static readonly string SITE_PROBE_URI = "https://www.jobs.bg/front_job_search.php?frompage=0&add_sh=1&categories%5B0%5D=15";
+        public static readonly string DEFAULT_CATEGORY_ID = "15";
         public static readonly int DEFAULT_ITEM_COUNT_PER_PAGE = 15;
 
         #endregion

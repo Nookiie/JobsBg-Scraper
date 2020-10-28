@@ -22,7 +22,7 @@ namespace JobsBgScraper.Common
 
         // Programming Language Search Parameters
         public IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
-        {"c#", ".net"};
+        {};
 
         // Position Level Search Parameters
         public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
@@ -48,7 +48,11 @@ namespace JobsBgScraper.Common
                 for (var counter = 0; counter < MaxItemCountOnJobsBg; counter += ItemCountPerPage)
                 {
                     yield return string.Format
-                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid={SelectedLocation}#paging");
+                        ($"https://www.jobs.bg/front_job_search.php" +
+                        $"?frompage={counter}" +
+                        $"&add_sh=1&categories%5B0%5D={GlobalConstants.DEFAULT_CATEGORY_ID}" +
+                        $"&location_sid={SelectedLocation}" +
+                        $"#paging");
                 }
             }
         }

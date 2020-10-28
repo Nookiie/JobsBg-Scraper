@@ -67,25 +67,25 @@ namespace JobsBgScraper.Common
 
                 foreach (var node in positionNodes)
                 {
-                    var position = node.InnerText.ToLower();
+                    var entry = node.InnerText.ToLower();
 
                     if (config.FirstConditionalJobKeyWords.Any())
                     {
                         foreach (var firstTerm in config.FirstConditionalJobKeyWords)
                         {
-                            if (position.Contains(firstTerm.ToLower()))
+                            if (entry.Contains(firstTerm.ToLower()))
                             {
                                 if (!config.SecondConditionalJobKeyWords.Any())
                                 {
-                                    FindCompanyAndFormat(node, currentPage, position, classNodes);
+                                    FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
                                 }
                                 else
                                 {
                                     foreach (var secondTerm in config.SecondConditionalJobKeyWords)
                                     {
-                                        if (position.Contains(secondTerm.ToLower()))
+                                        if (entry.Contains(secondTerm.ToLower()))
                                         {
-                                            FindCompanyAndFormat(node, currentPage, position, classNodes);
+                                            FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
                                         }
                                     }
                                 }
@@ -97,16 +97,16 @@ namespace JobsBgScraper.Common
                     {
                         foreach (var secondTerm in config.SecondConditionalJobKeyWords)
                         {
-                            if (position.Contains(secondTerm.ToLower()))
+                            if (entry.Contains(secondTerm.ToLower()))
                             {
-                                FindCompanyAndFormat(node, currentPage, position, classNodes);
+                                FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
                             }
                         }
                     }
 
                     else
                     {
-                        FindCompanyAndFormat(node, currentPage, position, classNodes);
+                        FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
                     }
                 }
             }
@@ -116,7 +116,7 @@ namespace JobsBgScraper.Common
 
         #region Helpers
 
-        private void FindCompanyAndFormat(HtmlNode node, string currentPage, string position, List<JobNode> classNodes)
+        private void FindCompanyAndAddToResultList(HtmlNode node, string currentPage, string position, List<JobNode> classNodes)
         {
             var companyNode = node
                 .SelectNodes($"../../td/a[contains(@class, '{GlobalConstants.HTML_COMPANY_CLASS_NAME}')]");
