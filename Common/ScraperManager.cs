@@ -19,6 +19,11 @@ namespace JobsBgScraper.Common
         private static readonly CancellationTokenSource cancellationToken = new CancellationTokenSource();
         private static readonly ScraperConfig config = new ScraperConfig();
 
+        /// <summary>
+        /// A method to return all HTML content from the required web pages by using URIs from <see cref="ScraperConfig.JobSiteUrls"/> <br></br>
+        /// Also sets the <see cref="ScraperConfig.MaxPageCount"/>
+        /// </summary>
+        /// <returns> All HTML code from web pages from <see cref="ScraperConfig.JobSiteUrls"/></returns>
         public async Task<IEnumerable<HtmlDocument>> GetHtmlDocumentsJob()
         {
             if (!IsScraperConfigValid())
@@ -43,6 +48,11 @@ namespace JobsBgScraper.Common
             return docs;
         }
 
+        /// <summary>
+        /// The Main Filter Method that performs all required filtering operations <br></br> Compiles the requested HTML documents with the help from multiple Helper methods <br></br>
+        /// </summary>
+        /// <param name="documents">HTML Documents, used from <see cref="GetHtmlDocumentsJob"/></param>
+        /// <exception cref="ArgumentNullException">The HTML Documents could not be found, check <see cref="GetHtmlDocumentsJob"/></exception>
         public void GetScrapeResultsAndAlertJob(IEnumerable<HtmlDocument> documents)
         {
             if (documents is null)
@@ -55,16 +65,7 @@ namespace JobsBgScraper.Common
             {
                 var positionNodes = document.DocumentNode
                     .SelectNodes($"//*[contains(@class, '{GlobalConstants.HTML_JOB_CLASS_NAME}')]");
-
-                var companyNodes = document.DocumentNode
-                    .SelectNodes($"//*[contains(@class, '{GlobalConstants.HTML_COMPANY_CLASS_NAME}')]");
-
-                var currentPage = document.DocumentNode
-                    .SelectSingleNode($"//*[contains(@class, '{GlobalConstants.HTML_PAGE_LINK_CURRENT_CLASS_NAME}')]")
-                    .InnerText
-                    .Replace("[", "")
-                    .Replace("]", "");
-
+                
                 foreach (var node in positionNodes)
                 {
                     var entry = node.InnerText.ToLower();
@@ -77,7 +78,7 @@ namespace JobsBgScraper.Common
                             {
                                 if (!config.SecondConditionalJobKeyWords.Any())
                                 {
-                                    FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
+                                    FormatDataAndAddToResultList(node, entry, classNodes);
                                 }
                                 else
                                 {
@@ -85,7 +86,7 @@ namespace JobsBgScraper.Common
                                     {
                                         if (entry.Contains(secondTerm.ToLower()))
                                         {
-                                            FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
+                                            FormatDataAndAddToResultList(node, entry, classNodes);
                                         }
                                     }
                                 }
@@ -99,14 +100,14 @@ namespace JobsBgScraper.Common
                         {
                             if (entry.Contains(secondTerm.ToLower()))
                             {
-                                FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
+                                FormatDataAndAddToResultList(node, entry, classNodes);
                             }
                         }
                     }
 
                     else
                     {
-                        FindCompanyAndAddToResultList(node, currentPage, entry, classNodes);
+                        FormatDataAndAddToResultList(node, entry, classNodes);
                     }
                 }
             }
@@ -115,23 +116,32 @@ namespace JobsBgScraper.Common
         }
 
         #region Helpers
-
-        private void FindCompanyAndAddToResultList(HtmlNode node, string currentPage, string position, List<JobNode> classNodes)
+        /// <summary>
+        /// Invoked when a job position within the parameters has been found<br></br>Selects and formats the company text, current page and adds it to the JobNode List
+        /// </summary>
+        /// <param name="node">The HTML document, to get the company text from</param>
+        /// <param name="currentPage">The current page the iteration is on, in string format</param>
+        /// <param name="position">The job position text</param>
+        /// <param name="classNodes">The JobNode list, that contains all found job positions in class format</param>
+        private void FormatDataAndAddToResultList(HtmlNode node, string position, List<JobNode> classNodes)
         {
-            var companyNode = node
-                .SelectNodes($"../../td/a[contains(@class, '{GlobalConstants.HTML_COMPANY_CLASS_NAME}')]");
-            var company = companyNode[0].InnerText;
+            var company = node
+                .SelectNodes($"../../td/a[contains(@class, '{GlobalConstants.HTML_COMPANY_CLASS_NAME}')]")
+                [0].InnerText;
 
-            int.TryParse(currentPage, out var currentPageInt);
-
-            classNodes.Add(new JobNode(position, company, currentPageInt));
+            var currentPageString = int.Parse(node
+                .SelectSingleNode($"//*[contains(@class, '{GlobalConstants.HTML_PAGE_LINK_CURRENT_CLASS_NAME}')]")
+                .InnerText
+                .Replace("[", "")
+                .Replace("]", ""));
+            
+            classNodes.Add(new JobNode(position, company, currentPageString));
         }
 
         /// <summary>
-        /// An initial probe on the site, 
-        /// primarily done to check the MaxPageCount per the site's parameters
+        /// An initial probe on the site, to find out the Max Page Count, which we can then use to automatically scan all job positions
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The Max Page Number of the Web Page, per the URL parameters, pointed from <see cref="ScraperConfig.JobSiteUrls"/></returns>
         private async Task<int> GetMaxPageCountOnSiteProbe()
         {
 
@@ -147,6 +157,10 @@ namespace JobsBgScraper.Common
             return int.Parse(limit[limit.Count() - 2].InnerText);
         }
 
+        /// <summary>
+        /// Performs a check if <see cref="ScraperConfig"/> values are not null
+        /// </summary>
+        /// <returns></returns>
         private bool IsScraperConfigValid()
         {
             if (config.JobSiteUrls is null)
@@ -159,10 +173,10 @@ namespace JobsBgScraper.Common
         }
 
         /// <summary>
-        /// Proper Formatting and printing to Console
+        /// Proper Formatting and Configuration to String with <paramref name="collection"/>
         /// </summary>
-        /// <param name="collection"></param>
-        /// <returns></returns>
+        /// <param name="collection">List of the Collected Job Node Items</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="collection"/> is not configured properly</exception>
         private string ResultsToStringJob(List<JobNode> collection)
         {
             var sb = new StringBuilder();
@@ -219,6 +233,10 @@ namespace JobsBgScraper.Common
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Printing to Console, uses <see cref="ResultsToStringJob(List{JobNode})"/>
+        /// </summary>
+        /// <param name="collection">List of the Collected Job Nodes</param>
         private void PrintResultsJob(List<JobNode> collection)
         {
             if (collection is null)

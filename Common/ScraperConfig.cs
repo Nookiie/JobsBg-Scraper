@@ -13,7 +13,7 @@ namespace JobsBgScraper.Common
     // Parameters are located here!
 
     /// <summary>
-    /// Custom Parameters for the ScraperManager
+    /// Custom Parameters in use for the <see cref="ScraperManager"/>
     /// </summary>
     public class ScraperConfig
     {
@@ -22,7 +22,7 @@ namespace JobsBgScraper.Common
 
         // Programming Language Search Parameters
         public IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
-        {};
+        {"unity"};
 
         // Position Level Search Parameters
         public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
@@ -40,7 +40,8 @@ namespace JobsBgScraper.Common
             get => MaxPageCount * ItemCountPerPage;
         }
 
-        // Automatically generates all page iterations of the jobs.bg domain per the parameters above
+        ///<summary> Automatically generates all page iterations of the jobs.bg domain per public parameters from <see cref="ScraperConfig"/>
+        ///</summary>
         public IEnumerable<string> JobSiteUrls
         {
             get
