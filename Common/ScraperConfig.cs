@@ -22,7 +22,7 @@ namespace JobsBgScraper.Common
 
         // Programming Language Search Parameters
         public IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
-        {"unity"};
+        {};
 
         // Position Level Search Parameters
         public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()

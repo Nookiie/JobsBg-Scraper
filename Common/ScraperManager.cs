@@ -160,7 +160,6 @@ namespace JobsBgScraper.Common
         /// <summary>
         /// Performs a check if <see cref="ScraperConfig"/> values are not null
         /// </summary>
-        /// <returns></returns>
         private bool IsScraperConfigValid()
         {
             if (config.JobSiteUrls is null)
