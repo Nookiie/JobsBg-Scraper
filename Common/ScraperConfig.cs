@@ -40,8 +40,8 @@ namespace JobsBgScraper.Common
             get => MaxPageCount * ItemCountPerPage;
         }
 
-        ///<summary> Automatically generates all page iterations of the jobs.bg domain per public parameters from <see cref="ScraperConfig"/>
-        ///</summary>
+        ///<summary> Automatically generates all page iterations of the jobs.bg domain per public parameters 
+        ///from <see cref="ScraperConfig"/> </summary>
         public IEnumerable<string> JobSiteUrls
         {
             get
@@ -49,11 +49,7 @@ namespace JobsBgScraper.Common
                 for (var counter = 0; counter < MaxItemCountOnJobsBg; counter += ItemCountPerPage)
                 {
                     yield return string.Format
-                        ($"https://www.jobs.bg/front_job_search.php" +
-                        $"?frompage={counter}" +
-                        $"&add_sh=1&categories%5B0%5D={GlobalConstants.DEFAULT_CATEGORY_ID}" +
-                        $"&location_sid={SelectedLocation}" +
-                        $"#paging");
+                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid={SelectedLocation}#paging");
                 }
             }
         }

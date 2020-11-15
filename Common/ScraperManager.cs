@@ -65,28 +65,37 @@ namespace JobsBgScraper.Common
             {
                 var positionNodes = document.DocumentNode
                     .SelectNodes($"//*[contains(@class, '{GlobalConstants.HTML_JOB_CLASS_NAME}')]");
-                
+
+                var companies = document.DocumentNode
+                    .SelectNodes($"../../td/a[contains(@class, '{GlobalConstants.HTML_COMPANY_CLASS_NAME}')]");
+
+                var currentPageString = document.DocumentNode
+                .SelectSingleNode($"//*[contains(@class, '{GlobalConstants.HTML_PAGE_LINK_CURRENT_CLASS_NAME}')]")
+                .InnerText
+                .Replace("[", "")
+                .Replace("]", "");
+
                 foreach (var node in positionNodes)
                 {
-                    var entry = node.InnerText.ToLower();
+                    var position = node.InnerText.ToLower();
 
                     if (config.FirstConditionalJobKeyWords.Any())
                     {
                         foreach (var firstTerm in config.FirstConditionalJobKeyWords)
                         {
-                            if (entry.Contains(firstTerm.ToLower()))
+                            if (position.Contains(firstTerm.ToLower()))
                             {
                                 if (!config.SecondConditionalJobKeyWords.Any())
                                 {
-                                    FormatDataAndAddToResultList(node, entry, classNodes);
+                                    FindCompanyAndFormat(node, currentPageString, position, classNodes);
                                 }
                                 else
                                 {
                                     foreach (var secondTerm in config.SecondConditionalJobKeyWords)
                                     {
-                                        if (entry.Contains(secondTerm.ToLower()))
+                                        if (position.Contains(secondTerm.ToLower()))
                                         {
-                                            FormatDataAndAddToResultList(node, entry, classNodes);
+                                            FindCompanyAndFormat(node, currentPageString, position, classNodes);
                                         }
                                     }
                                 }
@@ -98,16 +107,16 @@ namespace JobsBgScraper.Common
                     {
                         foreach (var secondTerm in config.SecondConditionalJobKeyWords)
                         {
-                            if (entry.Contains(secondTerm.ToLower()))
+                            if (position.Contains(secondTerm.ToLower()))
                             {
-                                FormatDataAndAddToResultList(node, entry, classNodes);
+                                FindCompanyAndFormat(node, currentPageString, position, classNodes);
                             }
                         }
                     }
 
                     else
                     {
-                        FormatDataAndAddToResultList(node, entry, classNodes);
+                        FindCompanyAndFormat(node, currentPageString, position, classNodes);
                     }
                 }
             }
@@ -123,19 +132,15 @@ namespace JobsBgScraper.Common
         /// <param name="currentPage">The current page the iteration is on, in string format</param>
         /// <param name="position">The job position text</param>
         /// <param name="classNodes">The JobNode list, that contains all found job positions in class format</param>
-        private void FormatDataAndAddToResultList(HtmlNode node, string position, List<JobNode> classNodes)
+        private void FindCompanyAndFormat(HtmlNode node, string currentPage, string position, List<JobNode> classNodes)
         {
             var company = node
                 .SelectNodes($"../../td/a[contains(@class, '{GlobalConstants.HTML_COMPANY_CLASS_NAME}')]")
                 [0].InnerText;
 
-            var currentPageString = int.Parse(node
-                .SelectSingleNode($"//*[contains(@class, '{GlobalConstants.HTML_PAGE_LINK_CURRENT_CLASS_NAME}')]")
-                .InnerText
-                .Replace("[", "")
-                .Replace("]", ""));
-            
-            classNodes.Add(new JobNode(position, company, currentPageString));
+            int.TryParse(currentPage, out var currentPageInt);
+
+            classNodes.Add(new JobNode(position, company, currentPageInt));
         }
 
         /// <summary>
