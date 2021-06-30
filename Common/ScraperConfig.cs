@@ -1,12 +1,4 @@
-﻿using AngleSharp.Common;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+﻿using System.Collections.Generic;
 
 namespace JobsBgScraper.Common
 {
@@ -21,12 +13,12 @@ namespace JobsBgScraper.Common
         #region Editable
 
         // Programming Language Search Parameters
-        public IEnumerable<string> FirstConditionalJobKeyWords { get; } = new List<string>()
-        {};
+        public IEnumerable<string> FirstConditionalJobKeyWords { get; set; } = new List<string>()
+        {"Java", "React", "C#"};
 
         // Position Level Search Parameters
-        public IEnumerable<string> SecondConditionalJobKeyWords { get; } = new List<string>()
-        {"intern", "trainee", "junior"};
+        public IEnumerable<string> SecondConditionalJobKeyWords { get; set; } = new List<string>()
+        {};
 
         // Location to analyse jobs in
         public int SelectedLocation { get; set; } = (int)Locations.Plovdiv;
@@ -49,7 +41,7 @@ namespace JobsBgScraper.Common
                 for (var counter = 0; counter < MaxItemCountOnJobsBg; counter += ItemCountPerPage)
                 {
                     yield return string.Format
-                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B0%5D=15&location_sid={SelectedLocation}#paging");
+                        ($"https://www.jobs.bg/front_job_search.php?frompage={counter}&add_sh=1&categories%5B%5D=56&location_sid={SelectedLocation}#paging");
                 }
             }
         }

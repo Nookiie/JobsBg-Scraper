@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JobsBgScraper.Common
+﻿namespace JobsBgScraper.Common
 {
     public enum Locations
     {

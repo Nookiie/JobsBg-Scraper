@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
 using JobsBgScraper.Common;
 
 namespace JobsBgScraper
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            ScraperManager sm = new ScraperManager();
+            var sm = new ScraperManager();
             sm.GetScrapeResultsAndAlertJob(sm.GetHtmlDocumentsJob().Result);
 
             Console.ReadKey();
